@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -21,3 +22,61 @@ def better_step(bin_edges, y, ax=None, **kwargs):
         ax = plt.gca()
     ax.plot(new_x, new_y, **kwargs)
     return ax
+
+
+def hist_on_binned_array(hist, edges, ax=None, **kwargs):
+    """Plot histogram with already binned data
+
+    Parameters
+    ----------
+    hist : ndarray of size n
+        population in each bin
+    edges : ndarray of size n+1
+        bin edges
+    ax : matplotlib axis object, optional
+        existing matplotlib axis to plot on, by default None
+
+    Returns
+    -------
+    n, edges, pathces: the default output from plt.hist
+    """
+    if ax is None:
+        ax = plt.gca()
+    x = (edges[1:] + edges[:-1]) / 2
+    n, edges, patches = ax.hist(x, weights=hist, bins=edges, **kwargs)
+    return n, edges, patches
+
+
+def hist2d_on_binned_array(hist, xedges, yedges, colorbar=False, ax=None, **kwargs):
+    """Plot histogram with already 2D binned data
+
+    Parameters
+    ----------
+    hist : ndarray of size m,n
+        population in each bin
+    xedges : ndarray of size n+1
+        bin edges along x axis
+    yedges : ndarray of size m+1
+        bin edges along y axis
+    colorbar : bool, optional
+        whether to add colorbar, by default False
+    ax : matplotlib axis object, optional
+        existing matplotlib axis to plot on, by default None
+
+    Returns
+    -------
+    h, xedges, yedges, im
+        the default output from plt.hist2d
+    """
+    if ax is None:
+        ax = plt.gca()
+    xdata = (xedges[1:] + xedges[:-1]) / 2
+    ydata = (yedges[1:] + yedges[:-1]) / 2
+    xv, yv = np.meshgrid(xdata, ydata)
+    x = xv.ravel()
+    y = yv.ravel()
+    z = hist.T.ravel()
+    h, xedges, yedges, im = ax.hist2d(x, y, weights=z, bins=(xedges, yedges), **kwargs)
+    if colorbar:
+        cb = ax.figure.colorbar(im, ax=ax)
+    return h, xedges, yedges, im
