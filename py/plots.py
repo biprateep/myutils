@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def better_step(bin_edges, y, ax=None, **kwargs):
+def better_step(bin_edges, y, yerr=None, ax=None, **kwargs):
     """A 'better' version of matplotlib's step function
 
     Given a set of bin edges and bin heights, this plots the thing
@@ -13,6 +13,7 @@ def better_step(bin_edges, y, ax=None, **kwargs):
         bin_edges: The bin edges. This should be one element longer than
             the bin heights array ``y``.
         y: The bin heights.
+        yerr: symmetric error on y.
         ax (Optional): The axis where this should be plotted.
 
     """
@@ -20,7 +21,12 @@ def better_step(bin_edges, y, ax=None, **kwargs):
     new_y = [a for row in zip(y, y) for a in row]
     if ax is None:
         ax = plt.gca()
-    ax.plot(new_x, new_y, **kwargs)
+    p = ax.plot(new_x, new_y, **kwargs)
+    if yerr is not None:
+        new_yerr = np.array([a for row in zip(yerr, yerr) for a in row])
+        ax.fill_between(
+            new_x, new_y + new_yerr, new_y - new_yerr, alpha=0.1, color=p[0].get_color()
+        )
     return ax
 
 
