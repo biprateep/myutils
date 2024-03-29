@@ -1,6 +1,8 @@
+import numpy as np
 from matplotlib import scale as mscale
 from matplotlib import transforms as mtransforms
 from matplotlib.ticker import AutoLocator, NullFormatter, NullLocator, ScalarFormatter
+
 
 
 class PowerLawScale(mscale.ScaleBase):
